@@ -19,22 +19,12 @@ const main = (): void => {
       case '!meme':
         channelMessagesController.execute(msg)
         break
-      // case '!meme':
-      //   msg.channel.send("Here's your meme!")
-      //   const img = await getMeme()
-      //   msg.channel.send(img)
-      //   break
-      // case '!eye':
-      //   msg.channel.send('You are now subscribed to eye reminders.')
-      //   interval = setInterval(function () {
-      //     msg.channel.send('Please take an eye break now!').catch(console.error)
-      //     //   }, 3600000); //every hour
-      //   }, 30000) // every hour
-      //   break
-      // case '!stop':
-      //   msg.channel.send('I have stopped eye reminders.')
-      //   clearInterval(interval)
-      //   break
+      case '!eye':
+        channelMessagesController.execute(msg)
+        break
+      case '!stop':
+        channelMessagesController.execute(msg)
+        break
     }
   })
 
