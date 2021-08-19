@@ -1,2 +1,3 @@
-# discordBot
-A simple discord bot
+# Discord Bot
+
+Um bot simples para discord
