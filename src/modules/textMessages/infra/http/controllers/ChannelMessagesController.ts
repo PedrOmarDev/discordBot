@@ -37,8 +37,6 @@ export default class ChannelMessagesController {
 
     if (this.memeMessage > 2) textMessage += ` YOUR MEMEMANIC!!!`
 
-    console.log('textMessage: ', textMessage)
-
     lastMessage.channel.send(textMessage)
   }
 
@@ -60,8 +58,6 @@ export default class ChannelMessagesController {
     const checkUserExistsInEyeBreakReminder = this.eyeBreakSubscribers.find(
       user => user.id === lastMessage.author.id,
     )
-
-    console.dir(this.eyeBreakSubscribers, { depth: null })
 
     if (!!checkUserExistsInEyeBreakReminder)
       lastMessage.channel.send(
@@ -91,9 +87,7 @@ export default class ChannelMessagesController {
       user => user.id === lastMessage.author.id,
     )
 
-    console.dir(this.eyeBreakSubscribers, { depth: null })
-
-    if (findUserIndexInEyeBreakReminder !== -1)
+    if (findUserIndexInEyeBreakReminder === -1)
       lastMessage.channel.send(
         'User are unsubscribed in reminder! For enter send "!eye"',
       )
