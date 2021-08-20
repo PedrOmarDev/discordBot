@@ -14,8 +14,6 @@ export default class RepliesControllers {
   private async replyPong(lastMessage: Message) {
     this.pingMessage++
 
-    console.log('this.pingMessage', this.pingMessage)
-
     if (this.pingMessage < 3) {
       lastMessage.reply('Pong!')
     } else {

@@ -2,13 +2,17 @@ import { container } from 'tsyringe'
 import { Message, MessageOptions, User } from 'discord.js'
 
 import GetRandomMemeImageService from '@modules/memes/services/GetRandomMemeImageService'
+import SendChannelMessageService from '@modules/textMessages/services/SendChannelMessageService'
 
 export default class ChannelMessagesController {
   private memeMessage = 0
   private eyeBreakSubscribers: User[] = []
   private interval: NodeJS.Timer
+  private sendChannelMessageService: SendChannelMessageService
 
   public async execute(lastMessage: Message): Promise<void> {
+    this.sendChannelMessageService = new SendChannelMessageService()
+
     switch (lastMessage.content) {
       case '!meme':
         this.memeRequestFlow(lastMessage)
@@ -37,7 +41,7 @@ export default class ChannelMessagesController {
 
     if (this.memeMessage > 2) textMessage += ` YOUR MEMEMANIC!!!`
 
-    lastMessage.channel.send(textMessage)
+    this.sendChannelMessageService.execute({ lastMessage, textMessage })
   }
 
   private async sendRandomMeme(lastMessage: Message) {
@@ -45,40 +49,49 @@ export default class ChannelMessagesController {
 
     const randomMemeImage = await getRandomMemeImage.execute()
 
-    lastMessage.channel.send(<MessageOptions>randomMemeImage)
+    this.sendChannelMessageService.execute({
+      lastMessage,
+      textMessage: <MessageOptions>randomMemeImage,
+    })
 
-    if (this.memeMessage > 2) lastMessage.channel.send(`:rage: :rage: :rage:`)
+    if (this.memeMessage > 2)
+      this.sendChannelMessageService.execute({
+        lastMessage,
+        textMessage: ':rage: :rage: :rage:',
+      })
   }
 
   private async eyeBreakReminderRequestFlow(lastMessage: Message) {
-    await this.sendYouAreSubscribeInEyeBreakMessage(lastMessage)
-  }
-
-  private async sendYouAreSubscribeInEyeBreakMessage(lastMessage: Message) {
     const checkUserExistsInEyeBreakReminder = this.eyeBreakSubscribers.find(
       user => user.id === lastMessage.author.id,
     )
 
     if (!!checkUserExistsInEyeBreakReminder)
-      lastMessage.channel.send(
-        'User already subscribed in reminder! For exit send "!stop"',
-      )
+      this.sendChannelMessageService.execute({
+        lastMessage,
+        textMessage:
+          'User already subscribed in reminder! For exit send "!stop"',
+      })
     else {
       this.createIntervalEyeBreak(lastMessage)
 
       const textMessage = `You are now subscribed to eye break reminders`
 
-      lastMessage.channel.send(textMessage)
+      this.sendChannelMessageService.execute({
+        lastMessage,
+        textMessage,
+      })
 
       this.eyeBreakSubscribers.push(lastMessage.author)
     }
   }
 
   private createIntervalEyeBreak(lastMessage: Message) {
-    this.interval = setInterval(function () {
-      lastMessage.channel
-        .send('Please take an eye break now!')
-        .catch(console.error)
+    this.interval = setInterval(() => {
+      this.sendChannelMessageService.execute({
+        lastMessage,
+        textMessage: 'Please take an eye break now!',
+      })
     }, 10000)
   }
 
@@ -88,15 +101,19 @@ export default class ChannelMessagesController {
     )
 
     if (findUserIndexInEyeBreakReminder === -1)
-      lastMessage.channel.send(
-        'User are unsubscribed in reminder! For enter send "!eye"',
-      )
+      this.sendChannelMessageService.execute({
+        lastMessage,
+        textMessage: 'User are unsubscribed in reminder! For enter send "!eye"',
+      })
     else {
       this.removeIntervalEyeBreak()
 
       const textMessage = `I have stopped eye reminders`
 
-      lastMessage.channel.send(textMessage)
+      this.sendChannelMessageService.execute({
+        lastMessage,
+        textMessage,
+      })
 
       this.eyeBreakSubscribers.splice(findUserIndexInEyeBreakReminder, 1)
     }

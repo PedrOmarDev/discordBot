@@ -5,7 +5,6 @@ import IMemesRepository from '@modules/memes/repositories/IMemesRepository'
 export default class MemesRepository implements IMemesRepository {
   public async findOne(): Promise<any> {
     const res = await axios.get('https://memeapi.pythonanywhere.com/')
-    console.log(res.data)
     return res.data.memes[0].url
   }
 }
