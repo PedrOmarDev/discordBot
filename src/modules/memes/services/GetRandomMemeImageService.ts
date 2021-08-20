@@ -13,8 +13,6 @@ export default class GetRandomMemeImageService {
   public async execute(): Promise<MemeImage> {
     const meme = await this.memesRepository.findOne()
 
-    console.log('meme: ', meme)
-
     return meme
   }
 }
